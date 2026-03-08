@@ -132,18 +132,33 @@ This Dart package implements lite mode only. It covers moon phase, position, ill
 
 The full-mode features (DE442S JPL ephemeris, sub-arcsecond accuracy, rise/set event finding, best-time optimization, full sighting reports) are available in the TypeScript package.
 
+## Architecture
+
+Two-mode design: lite mode uses Jean Meeus Chapters 47 and 48 for moon phase, position, and illumination — zero dependencies, no file I/O, works in any Dart environment. The GCRS-to-topocentric conversion applies ERA-only Earth rotation (no full nutation/precession), which introduces a ~1 degree systematic error acceptable for display and quick-estimate use cases.
+
+Full-mode features (DE442S ephemeris, sub-arcsecond accuracy, rise/set event finding) are in the TypeScript [moon-sighting](https://github.com/acamarata/moon-sighting) package.
+
 ## Compatibility
 
 - Dart SDK >= 3.7.0
 - Works in Flutter, Dart CLI, and server-side Dart
 - Zero runtime dependencies
 
-## Related Packages
+## Related
 
 - [moon-sighting](https://github.com/acamarata/moon-sighting) (TypeScript) - Full-accuracy lunar crescent visibility with DE442S ephemeris
 - [nrel-spa](https://github.com/acamarata/nrel-spa) (TypeScript) - Pure JS NREL Solar Position Algorithm
 - [pray-calc](https://github.com/acamarata/pray-calc) (JavaScript) - Islamic prayer time calculation
 - [luxon-hijri](https://github.com/acamarata/luxon-hijri) (TypeScript) - Hijri/Gregorian calendar conversion
+
+## Acknowledgments
+
+Crescent visibility criteria implemented from:
+
+- B.D. Yallop, "A Method for Predicting the First Sighting of the New Crescent Moon," NAO Technical Note No. 69, 1997.
+- M.Sh. Odeh, "New Criterion for Lunar Crescent Visibility," Experimental Astronomy 18(1), 39-64, 2006.
+
+Meeus positions from: Jean Meeus, "Astronomical Algorithms," 2nd ed., Chapters 47 and 48.
 
 ## License
 
