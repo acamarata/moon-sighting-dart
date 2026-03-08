@@ -20,5 +20,5 @@ print('Visible naked eye: ${vis.isVisibleNakedEye}');
 
 ## Pages
 
-- [API Reference](API-Reference) — Full function and type reference
-- [Visibility Criteria](Visibility-Criteria) — Yallop and Odeh crescent visibility criteria
+- [API Reference](API-Reference): Full function and type reference
+- [Visibility Criteria](Visibility-Criteria): Yallop and Odeh crescent visibility criteria

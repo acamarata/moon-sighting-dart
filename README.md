@@ -134,7 +134,7 @@ The full-mode features (DE442S JPL ephemeris, sub-arcsecond accuracy, rise/set e
 
 ## Architecture
 
-Two-mode design: lite mode uses Jean Meeus Chapters 47 and 48 for moon phase, position, and illumination — zero dependencies, no file I/O, works in any Dart environment. The GCRS-to-topocentric conversion applies ERA-only Earth rotation (no full nutation/precession), which introduces a ~1 degree systematic error acceptable for display and quick-estimate use cases.
+Two-mode design: lite mode uses Jean Meeus Chapters 47 and 48 for moon phase, position, and illumination: zero dependencies, no file I/O, works in any Dart environment. The GCRS-to-topocentric conversion applies ERA-only Earth rotation (no full nutation/precession), which introduces a ~1 degree systematic error acceptable for display and quick-estimate use cases.
 
 Full-mode features (DE442S ephemeris, sub-arcsecond accuracy, rise/set event finding) are in the TypeScript [moon-sighting](https://github.com/acamarata/moon-sighting) package.
 
