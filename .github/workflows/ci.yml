@@ -8,22 +8,33 @@ on:
 
 jobs:
   test:
+    name: Test (Dart ${{ matrix.dart-version }})
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        sdk: [stable, beta]
+        dart-version: [stable, beta]
     steps:
       - uses: actions/checkout@v4
       - uses: dart-lang/setup-dart@v1
         with:
-          sdk: ${{ matrix.sdk }}
+          sdk: ${{ matrix.dart-version }}
       - run: dart pub get
       - run: dart analyze --fatal-infos
       - run: dart test
+
+  format:
+    name: Format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
       - run: dart pub get
       - run: dart format --set-exit-if-changed .
 
   publish-check:
+    name: Publish Check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

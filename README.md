@@ -1,6 +1,7 @@
 # moon_sighting
 
 [![pub package](https://img.shields.io/pub/v/moon_sighting.svg)](https://pub.dev/packages/moon_sighting)
+[![CI](https://github.com/acamarata/moon-sighting-dart/actions/workflows/ci.yml/badge.svg)](https://github.com/acamarata/moon-sighting-dart/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 Lunar crescent visibility for Dart and Flutter. Computes moon phase, topocentric position, illumination, and Yallop/Odeh crescent visibility criteria using Meeus algorithms. Zero dependencies.
