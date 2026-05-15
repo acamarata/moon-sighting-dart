@@ -3,7 +3,7 @@ name: Sync Wiki
 on:
   push:
     branches: [main]
-    paths: [".wiki/**"]
+    paths: [".github/wiki/**"]
   workflow_dispatch:
 
 permissions:
@@ -29,7 +29,7 @@ jobs:
       - name: Sync wiki pages
         if: steps.clone_wiki.outputs.wiki_exists == 'true'
         run: |
-          cp .wiki/*.md .wiki-remote/
+          cp .github/wiki/*.md .wiki-remote/
           cd .wiki-remote
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
