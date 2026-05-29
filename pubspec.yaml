@@ -4,8 +4,10 @@ description: >
   illumination, and Yallop/Odeh visibility criteria using Meeus algorithms.
   Zero dependencies.
 version: 1.0.0
+homepage: https://github.com/acamarata/moon-sighting-dart
 repository: https://github.com/acamarata/moon-sighting-dart
 issue_tracker: https://github.com/acamarata/moon-sighting-dart/issues
+publisher: ariccamarata.com
 topics:
   - moon
   - lunar
