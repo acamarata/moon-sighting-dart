@@ -43,3 +43,40 @@ jobs:
           sdk: stable
       - run: dart pub get
       - run: dart pub publish --dry-run
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # Hostile-timezone matrix.
+  #
+  # Bugs in this family hide behind a single-timezone suite. The sibling
+  # TypeScript package shipped three of them while green, because every run
+  # happened on a machine west of UTC. Each zone below catches something the
+  # others cannot: UTC is the control, Kiritimati is UTC+14 and Etc/GMT+12 is
+  # UTC-12 (the two extremes), Tokyo is east with no DST, New York is west with
+  # DST, and Auckland exercises a southern-hemisphere transition.
+  # ───────────────────────────────────────────────────────────────────────────
+  timezones:
+    name: Test (TZ=${{ matrix.tz }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        tz:
+          - UTC
+          - America/New_York
+          - Asia/Tokyo
+          - Pacific/Kiritimati
+          - Etc/GMT+12
+          - Pacific/Auckland
+    env:
+      TZ: ${{ matrix.tz }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+      - run: dart pub get
+      - name: Confirm the runner is actually in the matrix zone
+        run: |
+          echo "TZ=$TZ"
+          date
+      - run: dart test
