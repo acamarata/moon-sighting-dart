@@ -1,3 +1,8 @@
+## 1.1.1
+
+### Fixed
+- **`MoonPhaseResult.nextFullMoon` reported a date in the past.** `nearestFullMoon` returns the CLOSEST full moon, which is behind the requested date for roughly half of every lunation, and it was assigned straight to `nextFullMoon`. Wrong on 547 of 1,095 days in a three-year sweep. Same class as the `age`/`prevNewMoon` defect in 1.1.0, and matches the JS `moon-sighting` 1.1.5 fix.
+
 ## 1.1.0
 
 ### Fixed

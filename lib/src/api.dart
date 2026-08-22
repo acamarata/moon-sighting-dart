@@ -81,6 +81,23 @@ double _previousNewMoon(double jdTT) {
   return jd;
 }
 
+/// The next full moon strictly after [jdTT].
+///
+/// [nearestFullMoon] returns the CLOSEST full moon, which is behind the requested date for
+/// roughly half of every lunation, and it was assigned straight to `nextFullMoon`. Across a
+/// three-year sweep that field was wrong on 547 of 1,095 days. Stepping forward a synodic
+/// month at a time until the result is strictly after the target is exact regardless of
+/// which side the estimate lands on.
+double _nextFullMoonAfter(double jdTT) {
+  var jd = nearestFullMoon(jdTT);
+  var guard = 0;
+  while (jd <= jdTT && guard < 4) {
+    jd = nearestFullMoon(jd + _kSynodicMonthDays);
+    guard++;
+  }
+  return jd;
+}
+
 /// The next new moon strictly after [jdTT], by the same reasoning as [_previousNewMoon].
 double _nextNewMoonAfter(double jdTT) {
   var jd = nearestNewMoon(jdTT);
@@ -117,7 +134,7 @@ MoonPhaseResult getMoonPhase([DateTime? date]) {
   final display = _phaseDisplay[phaseKey]!;
 
   final nextNewMoonJD = _nextNewMoonAfter(ts.jdTT);
-  final nextFullMoonJD = nearestFullMoon(ts.jdTT);
+  final nextFullMoonJD = _nextFullMoonAfter(ts.jdTT);
 
   return MoonPhaseResult(
     phase: phaseKey,

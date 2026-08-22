@@ -464,14 +464,23 @@ void main() {
       }
     });
 
-    test('prevNewMoon is never after, and nextNewMoon never at or before, the date', () {
-      for (var i = 0; i < 730; i++) {
+    test('the full lunation bracketing contract holds across three years', () {
+      for (var i = 0; i < 1095; i++) {
         final d = DateTime.utc(2026, 1, 1).add(Duration(days: i, hours: 12));
         final p = getMoonPhase(d);
         expect(p.prevNewMoon.isAfter(d), isFalse,
             reason: '$d: prevNewMoon ${p.prevNewMoon} is in the future');
         expect(p.nextNewMoon.isAfter(d), isTrue,
             reason: '$d: nextNewMoon ${p.nextNewMoon} is not in the future');
+        // nearestFullMoon returns the CLOSEST full moon, which is behind the date for
+        // about half of every lunation. Assigned straight to nextFullMoon it reported an
+        // already-past date on 547 of these 1095 days.
+        expect(p.nextFullMoon.isAfter(d), isTrue,
+            reason: '$d: nextFullMoon ${p.nextFullMoon} is in the past');
+        expect(p.nextFullMoon.difference(d).inHours / 24, lessThanOrEqualTo(30.5),
+            reason: '$d: nextFullMoon more than a lunation away');
+        expect(p.nextNewMoon.difference(d).inHours / 24, lessThanOrEqualTo(30.5),
+            reason: '$d: nextNewMoon more than a lunation away');
       }
     });
   });
