@@ -56,6 +56,42 @@ void _validateLongitude(double lon, String label) {
 
 // ── getMoonPhase ─────────────────────────────────────────────────────────────
 
+/// Mean length of a synodic month in days.
+const double _kSynodicMonthDays = 29.530588861;
+
+/// The last new moon at or before [jdTT].
+///
+/// [nearestNewMoon] rounds to the closest lunation, which is frequently the NEXT one. The
+/// call sites used to bias the input backwards by 15 days to compensate, but the lunation
+/// number comes from a decimal-year approximation and that bias does not hold near a
+/// boundary: for roughly five days before every new moon it still selected the upcoming
+/// lunation, so [MoonPhaseResult.age] — documented as "hours since last new moon" — came
+/// back NEGATIVE (down to -120h) and `prevNewMoon` reported a date in the future. It
+/// reproduced on about 60 days a year, every year.
+///
+/// Stepping back a whole synodic month at a time until the result is at or before the
+/// target is exact regardless of how the estimate rounds.
+double _previousNewMoon(double jdTT) {
+  var jd = nearestNewMoon(jdTT);
+  var guard = 0;
+  while (jd > jdTT && guard < 4) {
+    jd = nearestNewMoon(jd - _kSynodicMonthDays);
+    guard++;
+  }
+  return jd;
+}
+
+/// The next new moon strictly after [jdTT], by the same reasoning as [_previousNewMoon].
+double _nextNewMoonAfter(double jdTT) {
+  var jd = nearestNewMoon(jdTT);
+  var guard = 0;
+  while (jd <= jdTT && guard < 4) {
+    jd = nearestNewMoon(jd + _kSynodicMonthDays);
+    guard++;
+  }
+  return jd;
+}
+
 /// Compute the Moon's current phase, illumination, and next phase times.
 ///
 /// Works without a kernel (uses Meeus approximation).
@@ -74,13 +110,13 @@ MoonPhaseResult getMoonPhase([DateTime? date]) {
   final illum = computeIllumination(moonGCRS, sunGCRS);
   final illuminationPct = illum.illumination * 100;
 
-  final prevNewMoonJD = nearestNewMoon(ts.jdTT - 15);
+  final prevNewMoonJD = _previousNewMoon(ts.jdTT);
   final age = (ts.jdTT - prevNewMoonJD) * 24;
 
   final phaseKey = _elongationToPhase(illum.elongationDeg, illum.isWaxing);
   final display = _phaseDisplay[phaseKey]!;
 
-  final nextNewMoonJD = nearestNewMoon(ts.jdTT + 15);
+  final nextNewMoonJD = _nextNewMoonAfter(ts.jdTT);
   final nextFullMoonJD = nearestFullMoon(ts.jdTT);
 
   return MoonPhaseResult(

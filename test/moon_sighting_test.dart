@@ -438,4 +438,41 @@ void main() {
       }
     });
   });
+
+  // ───────────────────────────────────────────────────────────────────────────
+  // Moon age must never be negative.
+  //
+  // `nearestNewMoon` rounds to the closest lunation, which is frequently the NEXT one.
+  // Both call sites compensated by biasing the input 15 days backwards, but the lunation
+  // number comes from a decimal-year approximation and that bias does not hold near a
+  // boundary: for roughly five days before every new moon it still picked the upcoming
+  // lunation. `age`, documented as "hours since last new moon", came back down to -120h
+  // and `prevNewMoon` reported a future date, on about 60 days a year.
+  //
+  // This was fixed in the JS moon-sighting package first; the Dart port carried the
+  // identical defect and was missed on that pass.
+  // ───────────────────────────────────────────────────────────────────────────
+  group('moon age and new-moon bracketing', () {
+    test('age stays within one synodic month across two years', () {
+      for (var i = 0; i < 730; i++) {
+        final d = DateTime.utc(2026, 1, 1).add(Duration(days: i, hours: 12));
+        final p = getMoonPhase(d);
+        expect(p.age, greaterThanOrEqualTo(0),
+            reason: '$d: age ${p.age}h is negative');
+        expect(p.age, lessThan(750),
+            reason: '$d: age ${p.age}h exceeds a synodic month (~708h)');
+      }
+    });
+
+    test('prevNewMoon is never after, and nextNewMoon never at or before, the date', () {
+      for (var i = 0; i < 730; i++) {
+        final d = DateTime.utc(2026, 1, 1).add(Duration(days: i, hours: 12));
+        final p = getMoonPhase(d);
+        expect(p.prevNewMoon.isAfter(d), isFalse,
+            reason: '$d: prevNewMoon ${p.prevNewMoon} is in the future');
+        expect(p.nextNewMoon.isAfter(d), isTrue,
+            reason: '$d: nextNewMoon ${p.nextNewMoon} is not in the future');
+      }
+    });
+  });
 }
