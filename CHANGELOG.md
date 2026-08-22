@@ -1,3 +1,17 @@
+## 1.1.2
+
+### Added
+- **A cross-language parity suite.** `test/parity_test.dart` asserts the output of the reference JavaScript `moon-sighting` package across a full synodic month, four locations and epochs from 1990 to 2050.
+
+  `getMoonPhase` and `getMoonIllumination` match to 1.7e-15 — last-bit floating point. Those two are geocentric and never touch the observer pipeline.
+
+### Documented
+- **This port omits precession and nutation, and topocentric altitudes can be up to 0.88 degrees out.** It reaches the observer frame with a single rotation by the Earth Rotation Angle, where the reference implementation runs the full IAU frame chain. The gap grows with distance from J2000.
+
+  That affects `getMoonPosition` and, through it, `getMoonVisibilityEstimate`. It does not affect phase or illumination. The library doc now says so, and notes that a visibility zone returned near a boundary should be treated as provisional — the Yallop and Odeh criteria turn on tenths of a degree.
+
+  The 144 affected parity vectors are kept in the fixture and skipped with an explicit reason rather than asserted at a loosened tolerance, so the gap stays visible until the frames module is ported. Regenerating the fixture from this port would enshrine the less accurate values and is explicitly not the fix.
+
 ## 1.1.1
 
 ### Fixed
